@@ -1,0 +1,7 @@
+{
+  "name": "XaZeruth Eternal Core",
+  "version": "1.0.0",
+  "classification": "OPTIONAL_FIREBASE_INTEGRATION",
+  "core_truth": "Mwari ndi Mwari",
+  "safety": ["Do not commit SEED_DEPLOY_KEY", "Firestore is not a WORM ledger"]
+}

@@ -1,0 +1,10 @@
+{
+  "ZioncoreEnhancementProtocol": {
+    "version": "1.0.0",
+    "classification": "CEREMONIAL_CONFIG + SOFTWARE_HOOKS",
+    "divineSeed": {
+      "activationTrigger": "node src/index.js or open index.html",
+      "powersUnlocked": ["StructuredIdentityCases", "HashChainedEvidence", "HallmarkPublicVerification", "HonestUnavailableConnectors"]
+    }
+  }
+}
