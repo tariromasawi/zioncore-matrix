@@ -1,94 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>OMNIRESTORE — MATRIX RESTORATION CORE</title>
-  <style>
-    :root { --bg:#07080c; --ink:#f4efe4; --gold:#d4b36a; --muted:#9a917f; --line:#2a261c; --card:#12141b; --ok:#7dba6f; }
-    * { box-sizing: border-box; }
-    body { margin:0; background:var(--bg); color:var(--ink); font-family: Georgia, "Times New Roman", serif; }
-    header, main, footer { max-width: 980px; margin: 0 auto; padding: 1.2rem; }
-    .kicker { letter-spacing:.16em; text-transform:uppercase; font-size:.72rem; color:var(--gold); }
-    h1 { margin:.15rem 0; font-size:2.2rem; }
-    .gold { color:var(--gold); }
-    .muted { color:var(--muted); }
-    .ok { color:var(--ok); }
-    section { background:var(--card); border:1px solid var(--line); padding:1rem; margin:1rem 0; }
-    label { display:block; margin:.45rem 0; }
-    input { width:100%; padding:.55rem; background:#0b0d12; color:var(--ink); border:1px solid var(--line); }
-    button { margin:.35rem .35rem 0 0; background:var(--gold); color:#111; border:0; padding:.5rem .85rem; font-weight:700; cursor:pointer; }
-    button.ghost { background:transparent; color:var(--gold); border:1px solid var(--gold); }
-    .badge { display:inline-block; font-size:.72rem; border:1px solid var(--gold); color:var(--gold); padding:0 .35rem; margin-right:.3rem; }
-    pre { white-space:pre-wrap; font-size:.82rem; color:#d7d0c2; overflow:auto; }
-    a { color:var(--gold); }
-    .item { border-bottom:1px solid var(--line); padding:.45rem 0; }
-    footer { text-align:center; color:var(--muted); padding-bottom:3rem; }
-  </style>
-</head>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>MATRIX COMMAND — ZIONCORE — OMNIRESTORE</title>
+<style>
+:root{--bg:#05070c;--ink:#f3efe4;--gold:#d4b36a;--cyan:#79d0e8;--muted:#8b8373;--line:#2a261c;--card:#10131a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif}
+header{padding:1rem 1.2rem;border-bottom:1px solid var(--line)}
+.kicker{color:var(--gold);letter-spacing:.16em;text-transform:uppercase;font-size:.7rem}
+nav{display:flex;flex-wrap:wrap;gap:.35rem;padding:.8rem 1.2rem;border-bottom:1px solid var(--line)}
+nav button{background:transparent;color:var(--gold);border:1px solid var(--line);padding:.35rem .6rem;cursor:pointer}
+nav button.on{background:var(--gold);color:#111}
+main{padding:1rem 1.2rem 3rem;max-width:1100px}
+section{display:none;background:var(--card);border:1px solid var(--line);padding:1rem}
+section.on{display:block}
+#viz{height:240px;border:1px solid var(--line)}
+.item{border-bottom:1px solid var(--line);padding:.4rem 0}
+.badge{border:1px solid var(--gold);color:var(--gold);font-size:.72rem;padding:0 .3rem;margin-right:.3rem}
+pre{white-space:pre-wrap;overflow:auto}
+button.act{margin-top:.5rem;background:var(--gold);border:0;padding:.45rem .7rem;cursor:pointer}
+a{color:var(--cyan)}.muted{color:var(--muted)}
+</style></head>
 <body>
-  <header>
-    <p class="kicker">77-99-33 · 777-999-333 · Mwari ndi Mwari</p>
-    <h1>OMNIRESTORE</h1>
-    <p class="gold">MATRIX RESTORATION CORE — ONLINE</p>
-    <p class="muted">Recover · Preserve · Verify · Restore</p>
-    <p id="pulse" class="ok">Kernel booting…</p>
-  </header>
-  <main>
-    <section><h2>System</h2><div id="sys"></div></section>
-    <section>
-      <h2>Identity Case</h2>
-      <form id="form">
-        <label>Display name <input name="displayName" required placeholder="House of Masawi" /></label>
-        <label>Usernames <input name="usernames" placeholder="tariromasawi" /></label>
-        <label>Public URLs <input name="publicUrls" placeholder="https://github.com/tariromasawi" /></label>
-        <button type="submit">Create case + discover</button>
-      </form>
-    </section>
-    <section><h2>Cases</h2><div id="cases"></div></section>
-    <section><h2>Records</h2><div id="records">Create or open a case.</div></section>
-    <section><h2>Evidence chain</h2><pre id="chain"></pre></section>
-    <section><h2>Planes</h2><p class="muted">Software visualization layers — not alternate dimensions.</p><div id="planes"></div></section>
-  </main>
-  <footer>House of Masawi · Mwari ndi Mwari<br />© SAINT Tariro Masawi THE ANOINTED COMMANDER · tariro@masawi.org</footer>
-  <script>
-    const KEY = "zioncore-matrix-v1";
-    const PLANES = [["00","LOCAL"],["01","IDENTITY"],["02","DISCOVERY"],["03","EVIDENCE"],["04","RESTORATION"],["05","REPUTATION"],["06","CONTINUITY"],["07","INTEGRITY"],["08","ARCHIVE"],["09","MONITORING"],["10","ZIONCORE"]];
-    const state = load();
-    function load() { try { return JSON.parse(localStorage.getItem(KEY)) || seed(); } catch { return seed(); } }
-    function seed() { return { cases: [], records: [], chain: [{ type:"GENESIS", payload:"ZIONCORE-MATRIX-GENESIS | Mwari ndi Mwari | EOCC", at: new Date().toISOString(), hash:"GENESIS" }], audit: [] }; }
-    function save() { localStorage.setItem(KEY, JSON.stringify(state)); render(); }
-    function id(p) { return p + "_" + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
-    async function sha(text) { const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,"0")).join(""); }
-    async function append(payload) { const prev = state.chain[state.chain.length-1].hash; const at = new Date().toISOString(); const hash = await sha(prev + "|" + payload + "|" + at); state.chain.push({ type:"EVENT", payload, at, hash, prev }); }
-    document.getElementById("form").onsubmit = async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const c = { caseId: id("case"), displayName: fd.get("displayName"), usernames: String(fd.get("usernames")||"").split(",").map(s=>s.trim()).filter(Boolean), publicUrls: String(fd.get("publicUrls")||"").split(",").map(s=>s.trim()).filter(Boolean), createdAt: new Date().toISOString() };
-      state.cases.push(c);
-      for (const url of c.publicUrls) {
-        try { const u = new URL(url); state.records.push({ id:id("rec"), caseId:c.caseId, title:u.hostname, url:u.toString(), connectorId:"user_urls", status:"REVIEW_REQUIRED", provenance:"user_supplied" }); }
-        catch { state.records.push({ id:id("rec"), caseId:c.caseId, title:"Invalid URL", url:null, connectorId:"user_urls", status:"UNAVAILABLE", provenance:"rejected_invalid_url" }); }
-      }
-      state.records.push({ id:id("rec"), caseId:c.caseId, title:"Public web search unavailable", url:null, connectorId:"public_web", status:"UNAVAILABLE", provenance:"connector_unavailable" });
-      await append("CASE " + c.caseId + " " + c.displayName);
-      e.target.reset(); save(); openCase(c.caseId);
-    };
-    async function preserve(rid) { const rec = state.records.find(r => r.id === rid); if (!rec) return; rec.status = "PRESERVED"; await append("PRESERVE " + rid); rec.evidenceHash = state.chain[state.chain.length-1].hash; save(); }
-    function setStatus(rid, status) { const rec = state.records.find(r => r.id === rid); if (!rec) return; rec.status = status; save(); }
-    window.openCase = function(caseId) {
-      const recs = state.records.filter(r => r.caseId === caseId);
-      document.getElementById("records").innerHTML = recs.map(r => `<div class="item"><span class="badge">${r.status}</span><span class="badge">${r.connectorId}</span> ${esc(r.title||"")} ${r.url?`<a href="${r.url}" target="_blank" rel="noopener">${esc(r.url)}</a>`:""}${r.status!=="UNAVAILABLE"?`<div><button onclick="setStatus('${r.id}','CONFIRMED')">Confirm</button><button class="ghost" onclick="setStatus('${r.id}','REJECTED')">Reject</button><button onclick="preserve('${r.id}')">Preserve</button></div>`:""}</div>`).join("") || "No records.";
-    };
-    function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-    function render() {
-      document.getElementById("pulse").textContent = "KERNEL ONLINE · cases " + state.cases.length + " · records " + state.records.length + " · chain " + state.chain.length;
-      document.getElementById("sys").innerHTML = '<div class="item"><span class="badge">OK</span> Owner: SAINT Tariro Masawi THE ANOINTED COMMANDER</div><div class="item"><span class="badge">OK</span> Hallmark public key in /keys/hallmark.pub</div><div class="item"><span class="badge">UNAVAILABLE</span> Licensed public-web search API</div>';
-      document.getElementById("cases").innerHTML = state.cases.map(c => `<div class="item"><button onclick="openCase('${c.caseId}')">Open</button> <strong>${esc(c.displayName)}</strong> <span class="badge">${c.caseId}</span></div>`).join("") || "No cases yet.";
-      document.getElementById("chain").textContent = JSON.stringify(state.chain.slice(-8), null, 2);
-      document.getElementById("planes").innerHTML = PLANES.map(([id,n]) => `<span class="badge">PLANE ${id}</span> ${n} `).join(" ");
-    }
-    window.setStatus = setStatus; window.preserve = preserve; render();
-  </script>
-</body>
-</html>
+<header>
+<p class="kicker">MATRIX · ZIONCORE · OMNIRESTORE</p>
+<h1>Command Centre</h1>
+<p class="muted">Mwari ndi Mwari · House of Masawi · SAINT Tariro Masawi THE ANOINTED COMMANDER</p>
+<p id="mode">Checking kernel…</p>
+</header>
+<nav id="nav"></nav>
+<main>
+<section id="dashboard" class="on"><h2>Dashboard</h2><pre id="dash"></pre></section>
+<section id="sphere"><h2>Record Sphere</h2><div id="viz">3D layer</div><p class="muted">Visualization only.</p></section>
+<section id="identity"><h2>Identity / Project Recovery</h2><p>Missing items are UNAVAILABLE, never claimed deleted.</p></section>
+<section id="discovery"><h2>Discovery Console</h2><button class="act" id="scanGh">Scan public GitHub</button><div id="disc"></div></section>
+<section id="evidence"><h2>Evidence Vault</h2><pre id="ev"></pre></section>
+<section id="restoration"><h2>Restoration Engine</h2><p>FOUND → VERIFIED → PRESERVED → HASHED → CATALOGUED → RESTORATION PLANNED → USER APPROVED → ACTIONED</p></section>
+<section id="reputation"><h2>Reputation Workspace</h2><p>Labels only. No legal determination.</p></section>
+<section id="orchestrator"><h2>ZionCore Orchestrator</h2><pre id="orch"></pre></section>
+<section id="hallmark"><h2>Hallmark</h2><pre id="hall"></pre></section>
+<section id="monitoring"><h2>Monitoring</h2><pre id="mon"></pre></section>
+<section id="exports"><h2>Export</h2><p><a href="/api/export/json">JSON</a> · <a href="/api/export/csv">CSV</a></p></section>
+</main>
+<script src="https://unpkg.com/three@0.165.0/build/three.min.js"></script>
+<script>
+const tabs=["dashboard","sphere","identity","discovery","evidence","restoration","reputation","orchestrator","hallmark","monitoring","exports"];
+const nav=document.getElementById("nav");
+tabs.forEach(id=>{const b=document.createElement("button");b.textContent=id;b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));document.querySelectorAll("main section").forEach(x=>x.classList.remove("on"));b.classList.add("on");document.getElementById(id).classList.add("on");};if(id==="dashboard")b.classList.add("on");nav.appendChild(b);});
+async function api(path){const res=await fetch(path);if(!res.ok)throw new Error(path+" "+res.status);return res.json();}
+async function boot(){try{const b=await api("/api/boot");document.getElementById("mode").textContent="KERNEL MODE — HTML is the interface; ZionCore is the engine.";document.getElementById("dash").textContent=JSON.stringify(b.inventory,null,2);document.getElementById("orch").textContent=JSON.stringify(b.connectors,null,2);document.getElementById("mon").textContent=JSON.stringify(await api("/api/health"),null,2);document.getElementById("ev").textContent=JSON.stringify((await api("/api/evidence")).verify,null,2);document.getElementById("hall").textContent=JSON.stringify(await api("/api/hallmark"),null,2);}catch{document.getElementById("mode").textContent="LIMITED MODE — run npm start for the engine. Public GitHub scan remains factual.";}}
+document.getElementById("scanGh").onclick=async()=>{const box=document.getElementById("disc");try{const live=await api("/api/discover/github");box.innerHTML=live.records.map(r=>`<div class="item"><span class="badge">${r.status}</span><a href="${r.url||"#"}">${r.title}</a></div>`).join("");return;}catch{}const res=await fetch("https://api.github.com/users/tariromasawi/repos?per_page=100&type=owner");if(!res.ok){box.textContent="UNAVAILABLE "+res.status;return;}const repos=await res.json();box.innerHTML=repos.map(r=>`<div class="item"><span class="badge">FOUND</span><a href="${r.html_url}">${r.name}</a></div>`).join("");};
+(function(){const viz=document.getElementById("viz");if(!window.THREE){viz.textContent="List fallback";return;}const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(45,Math.max(viz.clientWidth,1)/240,0.1,100);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setSize(Math.max(viz.clientWidth,300),240);viz.innerHTML="";viz.appendChild(renderer.domElement);const mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(1.3,1),new THREE.MeshNormalMaterial({wireframe:true}));scene.add(mesh);camera.position.z=4;(function a(){requestAnimationFrame(a);mesh.rotation.y+=0.01;renderer.render(scene,camera);}());})();
+boot();
+</script></body></html>
